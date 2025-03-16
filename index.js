@@ -16,63 +16,68 @@ const usernameLogin = loginForm.elements["username"];
 const passwordLogin = loginForm.elements["password"];
 const persist = loginForm.elements["persist"];
 
+// Show errorDisplay div in order to allow user to see the criteria they need to fix
 function showError() {
   errorDisplay.style.display = "block";
 }
-
+// Hide errorDisplay div and empty its content
 function hideError() {
   errorDisplay.style.display = "none";
   errorDisplay.innerHTML = "";
 }
-
+// Show successDisplay div
 function showSucess() {
   successDisplay.style.display = "block";
 }
-
+// Hide successDisplay div and empty it's content
 function hideSuccess() {
   successDisplay.style.display = "none";
   successDisplay.innerHTML = "";
 }
 
-function validate(event) {
+// Ensures all input fields are submitted based on the criteria of each field in order to register a user
+function validateRegistration(event) {
   event.preventDefault();
+  // Hide errorDisplay and successDisplay
   hideError();
   hideSuccess();
 
+  // Evaluate username, if input does not meet the criteria return it to the user
   const usernameVal = validateUsername();
   if (usernameVal === false) {
     showError();
     return false;
   }
-
+  // Evaluate email, if input does not meet the criteria return it to the user
   const emailVal = validateEmail();
   if (emailVal === false) {
     showError();
     return false;
   }
-
+  // Evaluate password, if input does not meet the criteria return it to the user
   const passwordVal = validatePassword();
   if (passwordVal === false) {
     showError();
     return false;
   }
-
+  // Evaluate repeatedPassword, if input does not meet the criteria return it to the user
   const passwordCheckVal = validatePasswordCheck();
   if (passwordCheckVal === false) {
     showError();
     return false;
   }
-
+  // Evaluate terms and condition, if input does not meet the criteria return it to the user
   const termsVal = validateTerms();
   if (termsVal === false) {
     showError();
     return false;
   }
-
+  // Evaluates if all input fields meet criteria, if all fields are true save user information
   if (true) {
     showSucess();
     storeValues();
   }
+
   return true;
 }
 
@@ -149,7 +154,7 @@ function validateEmail() {
     email.focus();
     return false;
   }
-
+  // The email cannot already exist
   if (oldUsers.find((user) => user.email === email.value.toLowerCase())) {
     errorDisplay.textContent = "Email is registered to an account. Please Login.";
     email.focus();
@@ -240,8 +245,10 @@ function storeValues() {
   // Get the array from local Storage if there is none then create an array;
   const oldUsers = JSON.parse(localStorage.getItem("users")) || [];
 
+  // Create an object to store user information
   let user = {};
 
+  // Assign key value pairs to the user object
   Object.assign(user, {
     username: `${usernameStorage}`,
     password: `${passwordStorage}`,
@@ -264,18 +271,21 @@ function validateLogin(event) {
   hideError();
   hideSuccess();
 
+  // Evaluate usernameLogin, if input does not meet the criteria return it to the user
   const usernameLoginVal = validateUsernameLogin();
   if (usernameLoginVal === false) {
     showError();
     return false;
   }
 
+  // Evaluate passwordLogin, if input does not meet the criteria return it to the user
   const passwordLoginVal = validatePasswordLogin();
   if (passwordLoginVal === false) {
     showError();
     return false;
   }
 
+  // Evaluates if all input fields meet criteria, if all fields are true login the user in and display a success message
   if (true) {
     showSucess();
     validatePersist();
@@ -316,11 +326,12 @@ function validatePasswordLogin() {
 
   // Password cannot be blank
   if (passwordLogin.value === "") {
-    errorDisplay.textContent = "Password cannot be empty";
+    errorDisplay.textContent = "Password cannot be blank";
     passwordLogin.focus();
     return false;
   }
 
+  // Password Login value must be correct compare it to the password value in local storage
   if (
     !oldUsers.find(
       (user) => user.password === passwordLogin.value.toLowerCase()
@@ -339,6 +350,7 @@ function validatePersist() {
   if (persist.checked === true) {
     successDisplay.textContent = "Login Successful! Keeping you logged in.";
   } else {
+    // If "Keep me logged in" is not checked, modify success message
     successDisplay.textContent = "Login Successful!";
   }
 
@@ -348,5 +360,5 @@ function validatePersist() {
   return true;
 }
 
-registrationForm.addEventListener("submit", validate);
+registrationForm.addEventListener("submit", validateRegistration);
 loginForm.addEventListener("submit", validateLogin);
